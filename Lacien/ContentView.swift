@@ -1,40 +1,31 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var isFirstDetailViewPadded = false
-    @State private var isSecondDetailViewPadded = true
-    @State private var isThirdDetailViewPadded = true
-    @State private var isForthDetailViewPadded = true
-    
-    @State private var scrollIndex: Int? = 0
-    var images = ["me", "keyboard", "me", "me"]
-    var backgroundImage: String {
-        images[scrollIndex ?? 0]
-    }
+    @State private var isHomeViewPadded = false
 
     var body: some View {
         GeometryReader { geometry in
             ScrollView(.horizontal) {
                 HStack(spacing: 4) {
-                    DetailView(hasPadding: $isFirstDetailViewPadded, backgroundImage: "me")
+                    HomeView(hasPadding: $isHomeViewPadded)
                         .id(0)
-                        .frame(width: isFirstDetailViewPadded ? geometry.size.width - 40 : geometry.size.width)
-                    DetailView(hasPadding: $isSecondDetailViewPadded, backgroundImage: "keyboard")
+                        .frame(width: isHomeViewPadded ? geometry.size.width - 40 : geometry.size.width)
+                    ExperienceView()
                         .id(1)
                         .frame(width: geometry.size.width - 40)
-                    DetailView(hasPadding: $isThirdDetailViewPadded, backgroundImage: "me")
+                    SkillsView()
                         .id(2)
                         .frame(width: geometry.size.width - 40)
-                    DetailView(hasPadding: $isForthDetailViewPadded, backgroundImage: "keyboard")
+                    ProjectsView()
                         .id(3)
                         .frame(width: geometry.size.width - 40)
                 }
-                .padding(.horizontal, isFirstDetailViewPadded ? 20 : 0)
+                .padding(.horizontal, isHomeViewPadded ? 20 : 0)
                 .scrollTargetLayout()
             }
             .background(
                 GeometryReader { geometry in
-                    Image("me")
+                    Image.me
                         .resizable()
                         .scaledToFill()
                         .frame(width: geometry.size.width * 1.3,
@@ -44,10 +35,10 @@ struct ContentView: View {
                         .ignoresSafeArea()
                 }
             )
-            .scrollPosition(id: $scrollIndex)
+            .scrollIndicators(.hidden)
             .scrollClipDisabled()
             .scrollTargetBehavior(.viewAligned(limitBehavior: .always))
-            .scrollDisabled(!isFirstDetailViewPadded)
+            .scrollDisabled(!isHomeViewPadded)
         }
     }
 }
