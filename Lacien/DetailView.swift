@@ -2,23 +2,26 @@ import SwiftUI
 
 struct DetailView: View {
     @Binding var hasPadding: Bool
+    var backgroundImage: String
     
     var body: some View {
             GeometryReader { geometry in
                 ZStack {
-                    Image("me")
+                    Image(backgroundImage)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(
                             width: hasPadding ? geometry.size.width - 5 : geometry.size.width,
                             height: hasPadding ? geometry.size.height - 40 : geometry.size.height
                         )
+                        .allowsHitTesting(false)
                     
                     Color.black.opacity(0.6)
                         .frame(
                             width: hasPadding ? geometry.size.width - 5 : geometry.size.width,
                             height: hasPadding ? geometry.size.height - 40 : geometry.size.height
                         )
+                        .allowsHitTesting(false)
                     
                     VStack {
                         Spacer()
@@ -55,14 +58,17 @@ struct DetailView: View {
                         
                         // Footer
                         HStack(spacing: 30) {
-                            Image(systemName: "tortoise") // Placeholder for Twitter
-                            Image(systemName: "ant") // Placeholder for Facebook
-                            Image(systemName: "ladybug") // Placeholder for Instagram
-                            Image(systemName: "leaf") // Placeholder for Dribbble
-                            Image(systemName: "lasso") // Placeholder for Behance
+                            Image("github")
+                                .resizable()
+                                .renderingMode(.template)
+                                .foregroundStyle(.white)
+                                .frame(width: 30, height: 30)
+                            Image("linkedin")
+                                .resizable()
+                                .renderingMode(.template)
+                                .foregroundStyle(.white)
+                                .frame(width: 30, height: 30)
                         }
-                        .font(.title)
-                        .foregroundColor(.white)
                         .padding()
                     }
                 }
@@ -76,5 +82,5 @@ struct DetailView: View {
 }
 
 #Preview {
-    DetailView(hasPadding: .constant(true))
+    DetailView(hasPadding: .constant(true), backgroundImage: "me")
 }

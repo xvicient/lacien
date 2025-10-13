@@ -5,26 +5,48 @@ struct ContentView: View {
     @State private var isSecondDetailViewPadded = true
     @State private var isThirdDetailViewPadded = true
     @State private var isForthDetailViewPadded = true
+    
+    @State private var scrollIndex: Int? = 0
+    var images = ["me", "keyboard", "me", "me"]
+    var backgroundImage: String {
+        images[scrollIndex ?? 0]
+    }
 
     var body: some View {
         GeometryReader { geometry in
             ScrollView(.horizontal) {
                 HStack(spacing: 4) {
-                    DetailView(hasPadding: $isFirstDetailViewPadded)
+                    DetailView(hasPadding: $isFirstDetailViewPadded, backgroundImage: "me")
+                        .id(0)
                         .frame(width: isFirstDetailViewPadded ? geometry.size.width - 40 : geometry.size.width)
-                    DetailView(hasPadding: $isSecondDetailViewPadded)
+                    DetailView(hasPadding: $isSecondDetailViewPadded, backgroundImage: "keyboard")
+                        .id(1)
                         .frame(width: geometry.size.width - 40)
-                    DetailView(hasPadding: $isThirdDetailViewPadded)
+                    DetailView(hasPadding: $isThirdDetailViewPadded, backgroundImage: "me")
+                        .id(2)
                         .frame(width: geometry.size.width - 40)
-                    DetailView(hasPadding: $isForthDetailViewPadded)
+                    DetailView(hasPadding: $isForthDetailViewPadded, backgroundImage: "keyboard")
+                        .id(3)
                         .frame(width: geometry.size.width - 40)
                 }
                 .padding(.horizontal, isFirstDetailViewPadded ? 20 : 0)
                 .scrollTargetLayout()
             }
+            .background(
+                GeometryReader { geometry in
+                    Image("me")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: geometry.size.width * 1.3,
+                               height: geometry.size.height * 1.3)
+                        .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+                        .blur(radius: 10)
+                        .ignoresSafeArea()
+                }
+            )
+            .scrollPosition(id: $scrollIndex)
             .scrollClipDisabled()
             .scrollTargetBehavior(.viewAligned(limitBehavior: .always))
-            .background(.black)
             .scrollDisabled(!isFirstDetailViewPadded)
         }
     }
