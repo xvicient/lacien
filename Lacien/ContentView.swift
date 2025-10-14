@@ -2,6 +2,9 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var isHomeViewPadded = false
+    @State private var scrollPosition: Int? = 0
+    private let contentPadding: CGFloat = 20
+    @State private var isScrollDisabled: Bool = true
 
     var body: some View {
         GeometryReader { geometry in
@@ -10,18 +13,28 @@ struct ContentView: View {
                     HomeView(hasPadding: $isHomeViewPadded)
                         .id(0)
                         .frame(width: isHomeViewPadded ? geometry.size.width - 40 : geometry.size.width)
-                    ExperienceView()
+                        .zIndex(scrollPosition == 0 ? 4 : 3)
+                    ExperienceView(contentPadding: contentPadding) {
+                        isScrollDisabled = $0
+                    }
                         .id(1)
                         .frame(width: geometry.size.width - 40)
+                        .zIndex(scrollPosition == 1 ? 4 : 2)
                     SkillsView()
                         .id(2)
                         .frame(width: geometry.size.width - 40)
+                        .zIndex(scrollPosition == 2 ? 4 : 1)
                     ProjectsView()
                         .id(3)
                         .frame(width: geometry.size.width - 40)
+                        .zIndex(scrollPosition == 3 ? 4 : 0)
                 }
-                .padding(.horizontal, isHomeViewPadded ? 20 : 0)
+                .padding(.horizontal, isHomeViewPadded ? contentPadding : 0)
                 .scrollTargetLayout()
+            }
+            .scrollPosition(id: $scrollPosition)
+            .onAppear {
+                scrollPosition = 0
             }
             .background(
                 GeometryReader { geometry in
@@ -38,7 +51,10 @@ struct ContentView: View {
             .scrollIndicators(.hidden)
             .scrollClipDisabled()
             .scrollTargetBehavior(.viewAligned(limitBehavior: .always))
-            .scrollDisabled(!isHomeViewPadded)
+            .scrollDisabled(isScrollDisabled)
+            .onChange(of: isHomeViewPadded) {
+                isScrollDisabled = !isHomeViewPadded
+            }
         }
     }
 }
