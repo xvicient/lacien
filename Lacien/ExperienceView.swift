@@ -3,7 +3,6 @@ import SwiftUI
 struct ExperienceView: View {
     var contentPadding: CGFloat
     var isScrolled: (Bool) -> ()
-    var topPadding: CGFloat = 60
     
     @State private var isPageScrolled: Bool = false
     @State private var scrollProperties: ScrollGeometry = .init(
@@ -12,6 +11,18 @@ struct ExperienceView: View {
         contentInsets: .init(),
         containerSize: .zero
     )
+    private var topPadding: CGFloat = 60
+    private var paddingProgress: CGFloat {
+        -contentPadding * scrollProperties.topInsetProgress
+    }
+    
+    public init(
+        contentPadding: CGFloat,
+        isScrolled: @escaping (Bool) -> Void
+    ) {
+        self.contentPadding = contentPadding
+        self.isScrolled = isScrolled
+    }
     
     var body: some View {
         ScrollView(.vertical) {
@@ -30,16 +41,14 @@ struct ExperienceView: View {
         }
         .mask {
             UnevenRoundedRectangle(
-                cornerRadii: .init(
-                    topLeading: contentPadding,
-                    bottomLeading: contentPadding,
-                    bottomTrailing: contentPadding,
-                    topTrailing: contentPadding
-                )
+                topLeadingRadius: contentPadding,
+                bottomLeadingRadius: contentPadding,
+                bottomTrailingRadius: contentPadding,
+                topTrailingRadius: contentPadding
             )
-            .padding(.horizontal, -contentPadding * scrollProperties.topInsetProgress)
             .padding(.top, -topPadding * scrollProperties.offsetYProgress)
-            .padding(.bottom, -contentPadding * scrollProperties.topInsetProgress)
+            .padding(.horizontal, paddingProgress)
+            .padding(.bottom, paddingProgress)
         }
         .scrollClipDisabled()
         .onScrollGeometryChange(for: ScrollGeometry.self, of: {
@@ -54,7 +63,7 @@ struct ExperienceView: View {
             isScrolled(isPageScrolled)
         }
         .safeAreaPadding(.top, topPadding)
-        .safeAreaPadding(.bottom, contentPadding - ( contentPadding * scrollProperties.topInsetProgress))
+        .safeAreaPadding(.bottom, contentPadding + paddingProgress)
         .ignoresSafeArea()
     }
 }
