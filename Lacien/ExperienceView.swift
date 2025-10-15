@@ -18,7 +18,8 @@ struct ExperienceView: View {
                 Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ac blandit eros, nec luctus nulla. Quisque ante nulla, pulvinar eu sem a, vulputate accumsan dui. Fusce mattis ex vel purus sodales rutrum. Integer fringilla egestas diam luctus aliquam. Mauris ut massa ut ipsum porttitor porta non nec lectus. Phasellus a gravida erat, a varius purus. Maecenas tincidunt nibh a arcu elementum suscipit. Maecenas vel efficitur sapien. Phasellus malesuada, sem id malesuada feugiat, felis lacus interdum lorem, sed tincidunt arcu massa et enim. Vivamus fringilla aliquet nulla malesuada convallis. Cras iaculis pulvinar leo.\n\nDonec auctor sapien a eros porttitor, at rhoncus neque semper. Morbi lobortis et purus eu dictum. Donec consequat interdum fermentum. Pellentesque massa ex, auctor at semper nec, cursus nec nisi. Praesent tincidunt velit id ex ultricies lacinia. Duis vitae suscipit elit. Integer non est blandit, sollicitudin ex nec, mollis tortor. Curabitur tincidunt interdum bibendum. In eu varius libero, vel placerat tellus.\n\nCras id interdum metus. Nullam interdum, ligula ac finibus bibendum, risus metus luctus leo, maximus volutpat libero mi eget elit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aenean sed facilisis neque, et ullamcorper neque. Vivamus accumsan ullamcorper metus vel mollis. Aliquam maximus porta nunc ut dignissim. Donec id magna congue, elementum tellus eget, malesuada nisl. Mauris dui mi, tincidunt at leo sed, tempor tempus ante. Curabitur in efficitur erat.\n\nCras id interdum metus. Nullam interdum, ligula ac finibus bibendum, risus metus luctus leo, maximus volutpat libero mi eget elit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aenean sed facilisis neque, et ullamcorper neque. Vivamus accumsan ullamcorper metus vel mollis. Aliquam maximus porta nunc ut dignissim. Donec id magna congue, elementum tellus eget, malesuada nisl. Mauris dui mi, tincidunt at leo sed, tempor tempus ante. Curabitur in efficitur erat.\n\nCras id interdum metus. Nullam interdum, ligula ac finibus bibendum, risus metus luctus leo, maximus volutpat libero mi eget elit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aenean sed facilisis neque, et ullamcorper neque. Vivamus accumsan ullamcorper metus vel mollis. Aliquam maximus porta nunc ut dignissim. Donec id magna congue, elementum tellus eget, malesuada nisl. Mauris dui mi, tincidunt at leo sed, tempor tempus ante. Curabitur in efficitur erat.")
                     .font(.body)
                     .foregroundColor(.white)
-                    .padding()
+                    .padding(.vertical)
+                    .padding(.horizontal, contentPadding + (contentPadding * scrollProperties.topInsetProgress))
             }
             .background {
                 Image.keyboard
@@ -37,10 +38,13 @@ struct ExperienceView: View {
             isPageScrolled = newValue.offsetY > 0
         })
         .scrollIndicators(.hidden)
-        .scrollTargetBehavior(BookScrollEnd(topInset: scrollProperties.contentInsets.top))
+        .scrollTargetBehavior(ScrollTargetEnd(topInset: scrollProperties.contentInsets.top))
         .onChange(of: isPageScrolled) {
             isScrolled(isPageScrolled)
         }
+        .safeAreaPadding(.top, 60)
+        .safeAreaPadding(.bottom, 20)
+        .ignoresSafeArea()
     }
 }
 
@@ -55,7 +59,7 @@ extension ScrollGeometry {
     }
 }
 
-struct BookScrollEnd: ScrollTargetBehavior {
+struct ScrollTargetEnd: ScrollTargetBehavior {
     var topInset: CGFloat
     func updateTarget(_ target: inout ScrollTarget, context: TargetContext) {
         if target.rect.minY < topInset {
