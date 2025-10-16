@@ -12,8 +12,11 @@ struct ExperienceView: View {
         containerSize: .zero
     )
     private var topPadding: CGFloat = 60
-    private var paddingProgress: CGFloat {
+    private var horizontalPadding: CGFloat {
         -contentPadding * scrollProperties.topInsetProgress
+    }
+    private var bottomPadding: CGFloat {
+        -contentPadding + horizontalPadding + 4 // adding the space between views in the hstack on the horizontal scrollview
     }
     
     public init(
@@ -46,9 +49,8 @@ struct ExperienceView: View {
                 bottomTrailingRadius: contentPadding,
                 topTrailingRadius: contentPadding
             )
-            .padding(.top, -topPadding * scrollProperties.offsetYProgress)
-            .padding(.horizontal, paddingProgress)
-            .padding(.bottom, paddingProgress)
+            .padding(.top, -scrollProperties.offsetY)
+            .padding(.horizontal, horizontalPadding)
         }
         .scrollClipDisabled()
         .onScrollGeometryChange(for: ScrollGeometry.self, of: {
@@ -62,9 +64,7 @@ struct ExperienceView: View {
         .onChange(of: isPageScrolled) {
             isScrolled(isPageScrolled)
         }
-        .safeAreaPadding(.top, topPadding)
-        .safeAreaPadding(.bottom, contentPadding + paddingProgress)
-        .ignoresSafeArea()
+        .padding(.bottom, bottomPadding)
     }
 }
 
@@ -93,24 +93,5 @@ struct ScrollTargetEnd: ScrollTargetBehavior {
 }
 
 #Preview {
-    let contentPadding : CGFloat = 20
-    GeometryReader { geometry in
-        ScrollView(.horizontal) {
-            HStack(spacing: 4) {
-                ExperienceView(contentPadding: contentPadding) { _ in }
-                    .id(0)
-                    .frame(width: geometry.size.width - 40)
-                    .zIndex(1)
-                ExperienceView(contentPadding: contentPadding) { _ in }
-                    .id(0)
-                    .frame(width: geometry.size.width - 40)
-                    .zIndex(0)
-            }
-            .padding(.horizontal, contentPadding)
-            .scrollTargetLayout()
-        }
-        .scrollIndicators(.hidden)
-        .scrollClipDisabled()
-        .scrollTargetBehavior(.viewAligned(limitBehavior: .always))
-    }
+    ContentView()
 }

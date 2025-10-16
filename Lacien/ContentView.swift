@@ -1,41 +1,48 @@
 import SwiftUI
 
+enum CardType: CaseIterable, Identifiable {
+    case experience, skills, projects
+    var id: Self { self }
+}
+
 struct ContentView: View {
     @State private var isHomeViewPadded = false
     @State private var scrollPosition: Int? = 0
-    private let contentPadding: CGFloat = 20
     @State private var isScrollDisabled: Bool = true
-
+    private let contentPadding: CGFloat = 20
+    private var outerPadding: CGFloat {
+        contentPadding * 2
+    }
+    
     var body: some View {
         GeometryReader { geometry in
             ScrollView(.horizontal) {
                 HStack(spacing: 4) {
+                    let width = geometry.size.width - outerPadding
+                    
                     HomeView(hasPadding: $isHomeViewPadded)
-                        .id(0)
-                        .frame(width: isHomeViewPadded ? geometry.size.width - 40 : geometry.size.width)
-                        .zIndex(scrollPosition == 0 ? 4 : 3)
-                    ExperienceView(contentPadding: contentPadding) {
-                        isScrollDisabled = $0
+                        .cardStyle(
+                            index: 0,
+                            scrollPosition: scrollPosition,
+                            width: isHomeViewPadded ? width : geometry.size.width
+                        )
+                        .ignoresSafeArea()
+                    
+                    ForEach(Array(CardType.allCases.enumerated()), id: \.offset) { index, type in
+                        ExperienceView(contentPadding: contentPadding) {
+                            isScrollDisabled = $0
+                        }
+                        .cardStyle(
+                            index: index + 1,
+                            scrollPosition: scrollPosition,
+                            width: width
+                        )
                     }
-                        .id(1)
-                        .frame(width: geometry.size.width - 40)
-                        .zIndex(scrollPosition == 1 ? 4 : 2)
-                    SkillsView()
-                        .id(2)
-                        .frame(width: geometry.size.width - 40)
-                        .zIndex(scrollPosition == 2 ? 4 : 1)
-                    ProjectsView()
-                        .id(3)
-                        .frame(width: geometry.size.width - 40)
-                        .zIndex(scrollPosition == 3 ? 4 : 0)
                 }
                 .padding(.horizontal, isHomeViewPadded ? contentPadding : 0)
                 .scrollTargetLayout()
             }
             .scrollPosition(id: $scrollPosition)
-            .onAppear {
-                scrollPosition = 0
-            }
             .background(
                 GeometryReader { geometry in
                     Image.me
@@ -75,7 +82,7 @@ extension View {
         _ condition: @autoclosure () -> Bool,
         transform: (Self) -> Content
     )
-        -> some View
+    -> some View
     {
         if condition() {
             transform(self)
@@ -85,3 +92,38 @@ extension View {
         }
     }
 }
+
+struct CardStyle: ViewModifier {
+    var index: Int
+    var scrollPosition: Int?
+    var width: CGFloat
+    
+    func body(content: Content) -> some View {
+        content
+            .id(index)
+            .frame(width: width)
+            .shadow(color: .black.opacity(0.25), radius: 8, x: 5, y: 10)
+            .zIndex(scrollPosition == index ? 1000 : 0)
+            .scrollTransition(.interactive, axis: .horizontal) { view, phase in
+                view.scaleEffect(phase.isIdentity ? 1 : 0.95)
+            }
+
+    }
+}
+
+extension View {
+    func cardStyle(
+        index: Int,
+        scrollPosition: Int?,
+        width: CGFloat
+    ) -> some View {
+        self.modifier(
+            CardStyle(
+                index: index,
+                scrollPosition: scrollPosition,
+                width: width
+            )
+        )
+    }
+}
+

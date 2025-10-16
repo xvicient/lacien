@@ -4,6 +4,23 @@ struct HomeView: View {
     @Binding var hasPadding: Bool
     
     var body: some View {
+        contentView
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background {
+            ZStack {
+                Image.me
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                
+                Color.black.opacity(0.6)
+            }
+        }
+        .cornerRadius(hasPadding ? 20 : 0)
+        .safeAreaPadding(.top, hasPadding ? 60 : 0)
+        .safeAreaPadding(.bottom, hasPadding ? 20 : 0)
+    }
+    
+    private var contentView: some View {
         VStack {
             Spacer()
             
@@ -52,43 +69,9 @@ struct HomeView: View {
             }
             .padding()
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background {
-            ZStack {
-                Image.me
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                
-                Color.black.opacity(0.6)
-            }
-        }
-        .cornerRadius(hasPadding ? 20 : 0)
-        .safeAreaPadding(.top, hasPadding ? 60 : 0)
-        .safeAreaPadding(.bottom, hasPadding ? 20 : 0)
-        .ignoresSafeArea()
     }
 }
 
 #Preview {
-    let contentPadding : CGFloat = 20
-    let hasPadding = false
-    GeometryReader { geometry in
-        ScrollView(.horizontal) {
-            HStack(spacing: 4) {
-                HomeView(hasPadding: .constant(hasPadding))
-                    .id(0)
-                    .frame(width: geometry.size.width - 40)
-                    .zIndex(1)
-                HomeView(hasPadding: .constant(hasPadding))
-                    .id(0)
-                    .frame(width: geometry.size.width - 40)
-                    .zIndex(0)
-            }
-            .padding(.horizontal, hasPadding ? contentPadding : 0)
-            .scrollTargetLayout()
-        }
-        .scrollIndicators(.hidden)
-        .scrollClipDisabled()
-        .scrollTargetBehavior(.viewAligned(limitBehavior: .always))
-    }
+    ContentView()
 }
