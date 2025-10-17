@@ -57,7 +57,7 @@ struct ExperienceView: View {
             $0
         }, action: { oldValue, newValue in
             scrollProperties = newValue
-            isPageScrolled = newValue.offsetY > 0
+            isPageScrolled = round(newValue.offsetY) > 0
         })
         .scrollIndicators(.hidden)
         .scrollTargetBehavior(ScrollTargetEnd(topInset: scrollProperties.contentInsets.top))
