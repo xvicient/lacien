@@ -17,7 +17,7 @@ struct ContentView: View {
     var body: some View {
         GeometryReader { geometry in
             ScrollView(.horizontal) {
-                HStack(spacing: 4) {
+                HStack {
                     let width = geometry.size.width - outerPadding
                     
                     HomeView(hasPadding: $isHomeViewPadded)
@@ -101,11 +101,11 @@ struct CardStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
             .id(index)
-            .frame(width: width)
+            .frame(width: width < 0 ? 0 : width)
             .shadow(color: .black.opacity(0.25), radius: 8, x: 5, y: 10)
             .zIndex(scrollPosition == index ? 1000 : 0)
             .scrollTransition(.interactive, axis: .horizontal) { view, phase in
-                view.scaleEffect(phase.isIdentity ? 1 : 0.95)
+                view.scaleEffect(phase.isIdentity ? 1.02 : 0.98)
             }
 
     }

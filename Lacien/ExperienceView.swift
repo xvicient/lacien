@@ -16,7 +16,7 @@ struct ExperienceView: View {
         -contentPadding * scrollProperties.topInsetProgress
     }
     private var bottomPadding: CGFloat {
-        -contentPadding + horizontalPadding + 4 // adding the space between views in the hstack on the horizontal scrollview
+        -contentPadding + horizontalPadding
     }
     
     public init(
